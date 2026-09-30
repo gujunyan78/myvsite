@@ -1,0 +1,11 @@
+# 编译产物
+/bin/
+vsite
+
+# 上传文件
+/web/static/uploads/*
+!/web/static/uploads/.gitkeep
+
+# 本地数据 / 日志
+*.log
+.idea/

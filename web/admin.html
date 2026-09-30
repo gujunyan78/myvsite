@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0e15">
+<title>VSITE Admin</title>
+<link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body>
+<!-- Login -->
+<div id="login-page" class="login-page">
+  <form id="login-form" class="login-card">
+    <div class="login-logo"><span>V</span></div>
+    <h1>VSITE Admin</h1>
+    <p class="login-tip">Enter your admin credentials</p>
+    <label>Username<input type="text" id="login-user" autocomplete="username" placeholder="ADMIN"></label>
+    <label>Password<input type="password" id="login-pass" autocomplete="current-password" placeholder="Password"></label>
+    <button type="submit">Sign in</button>
+    <a class="back-site" href="/">← Back to site</a>
+  </form>
+</div>
+
+<!-- Forced password change -->
+<div id="force-page" class="login-page" hidden>
+  <form id="force-form" class="login-card">
+    <div class="login-logo"><span>!</span></div>
+    <h1>Change the default password</h1>
+    <p class="login-tip">You must set a new password before using the admin panel</p>
+    <label>Username<input type="text" id="force-user" placeholder="ADMIN"></label>
+    <label>Current password<input type="password" id="force-old" placeholder="Default password"></label>
+    <label>New password<input type="password" id="force-new" placeholder="At least 6 characters"></label>
+    <button type="submit">Confirm</button>
+  </form>
+</div>
+
+<!-- Main layout -->
+<div id="admin-app" class="admin-app" hidden>
+  <aside class="sidebar">
+    <div class="side-brand"><span class="brand-logo">V</span> VSITE</div>
+    <nav>
+      <a data-tab="overview" class="active">Overview</a>
+      <a data-tab="bloggers">Creators</a>
+      <a data-tab="videos">Videos</a>
+      <a data-tab="comments">Comments</a>
+    </nav>
+    <div class="side-foot">
+      <div id="who" class="who"></div>
+      <button id="logout-btn">Sign out</button>
+    </div>
+  </aside>
+
+  <main class="content">
+    <header class="content-head">
+      <h2 id="page-title">Overview</h2>
+      <div id="head-actions"></div>
+    </header>
+
+    <section id="tab-overview" class="tab">
+      <div class="stat-grid" id="stat-grid"></div>
+    </section>
+
+    <section id="tab-bloggers" class="tab" hidden>
+      <div class="toolbar">
+        <input type="search" id="blogger-kw" placeholder="Search creators by account">
+        <button class="btn" data-act="new-blogger">+ New creator</button>
+      </div>
+      <div class="table-wrap"><table id="blogger-table"><thead><tr><th>ID</th><th>Avatar</th><th>Account</th><th>Bio</th><th>Videos</th><th>Status</th><th>Actions</th></tr></thead><tbody></tbody></table></div>
+      <div class="pager" id="blogger-pager"></div>
+    </section>
+
+    <section id="tab-videos" class="tab" hidden>
+      <div class="toolbar">
+        <input type="search" id="video-kw" placeholder="Search title / creator">
+        <select id="video-blogger"></select>
+        <button class="btn" data-act="new-video">+ New video</button>
+      </div>
+      <div class="table-wrap"><table id="video-table"><thead><tr><th>ID</th><th>Cover</th><th>Title</th><th>Creator</th><th>Likes / Views</th><th>Comments</th><th>Status</th><th>Actions</th></tr></thead><tbody></tbody></table></div>
+      <div class="pager" id="video-pager"></div>
+    </section>
+
+    <section id="tab-comments" class="tab" hidden>
+      <div class="toolbar">
+        <select id="comment-video"></select>
+      </div>
+      <div class="table-wrap"><table id="comment-table"><thead><tr><th>ID</th><th>Video</th><th>Nickname</th><th>Content</th><th>Time</th><th>Actions</th></tr></thead><tbody></tbody></table></div>
+      <div class="pager" id="comment-pager"></div>
+    </section>
+  </main>
+</div>
+
+<!-- Creator modal -->
+<div id="blogger-modal" class="modal" hidden>
+  <div class="modal-card">
+    <div class="modal-head"><strong id="blogger-modal-title">New creator</strong><button class="x" data-close>×</button></div>
+    <form id="blogger-form" class="form">
+      <input type="hidden" id="blogger-id">
+      <label>Account*<input type="text" id="blogger-account" maxlength="64" required></label>
+      <label>Bio<input type="text" id="blogger-desc" maxlength="500"></label>
+      <label>Avatar URL<input type="text" id="blogger-avatar" placeholder="http(s):// or leave empty"></label>
+      <label>Status
+        <select id="blogger-status"><option value="1">Active</option><option value="0">Hidden</option></select>
+      </label>
+      <div class="modal-foot"><button type="button" class="btn ghost" data-close>Cancel</button><button type="submit" class="btn">Save</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- Video modal -->
+<div id="video-modal" class="modal" hidden>
+  <div class="modal-card">
+    <div class="modal-head"><strong id="video-modal-title">New video</strong><button class="x" data-close>×</button></div>
+    <form id="video-form" class="form">
+      <input type="hidden" id="video-id">
+      <label>Creator*<select id="video-blogger-id" required></select></label>
+      <label>Title*<input type="text" id="video-title" maxlength="200" required></label>
+      <label>Video URL*<input type="text" id="video-url" placeholder="http(s)://... or /static/uploads/..." required></label>
+      <label>Cover URL
+        <span class="row">
+          <input type="text" id="video-cover" placeholder="http(s)://... or leave empty">
+          <button type="button" class="btn ghost" id="upload-cover">Upload</button>
+        </span>
+      </label>
+      <label>Description<textarea id="video-desc" rows="3" maxlength="1000"></textarea></label>
+      <label>Status
+        <select id="video-status"><option value="1">Online</option><option value="0">Offline</option></select>
+      </label>
+      <div class="modal-foot"><button type="button" class="btn ghost" data-close>Cancel</button><button type="submit" class="btn">Save</button></div>
+    </form>
+  </div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="/static/js/admin.js"></script>
+</body>
+</html>
